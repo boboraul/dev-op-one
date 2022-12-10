@@ -3,17 +3,33 @@ const quoteText = document.getElementById('quote');
 const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuoteBtn = document.getElementById('new-quote');
+const loader = document.getElementById('loader');
+
+// Show loading
+function loading() {
+    loader.hidden = false;
+    quoteContainer.hidden = true;
+}
+
+// // Hide loading
+function complete() {
+    if (!loader.hidden) {
+        quoteContainer.hidden = false;
+        loader.hidden = true;
+    } 
+}
 
 // Get Quotes From API
-// let apiQuotes = [];
+let apiQuotes = [];
 
 // Show new quote
 function newQuote() {
+    loading();
     // Pick a random quote from apiQuotes array
-    const quote = localQuotes[Math.floor(Math.random() * localQuotes.length)];
+    const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
 
     if (!quote.author) {
-        authorText.textContent = 'Unknown';
+        authorText.textContent = 'Unknown'; 
     } else {
         authorText.textContent = quote.author;
     }
@@ -25,23 +41,22 @@ function newQuote() {
         quoteText.classList.remove('long-quote');
     }
     quoteText.textContent = quote.text;
+    // Hide loader
+    complete();
 }
 
 // External Api
-// async function getQuotes() {
-//     const apiUrl = 'https://type.fit/api/quotes';
-//     try {
-//         const response = await fetch(apiUrl);
-//         apiQuotes = await response.json();
-//         newQuote();
-//     } catch (error) {
-//         console.log('Quotes not found');
-//     }
-// }
-
-// on Load
-// getQuotes();
-newQuote();
+async function getQuotes() {
+    loading();
+    const apiUrl = 'https://type.fit/api/quotes';
+    try {
+        const response = await fetch(apiUrl);
+        apiQuotes = await response.json();
+        newQuote();
+    } catch (error) {
+        console.log('Quotes not found');
+    }
+}
 
 // Tweet Quote
 function tweetQuote() {
@@ -51,4 +66,9 @@ function tweetQuote() {
 
 newQuoteBtn.addEventListener('click', newQuote);
 twitterBtn.addEventListener('click', tweetQuote);
+
+// on Load
+getQuotes();
+
+// newQuote();
 
