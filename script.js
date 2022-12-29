@@ -45,6 +45,7 @@ function newQuote() {
     complete();
 }
 
+
 // External Api
 async function getQuotes() {
     loading();
